@@ -1,0 +1,25 @@
+<ion-view title="Login" id="page5" cache-view="false">
+    <ion-content overflow-scroll="true" padding="true" style="background: url(img/SmJP1aZlQZuE5lYyV4nU_wallpaper-1.jpg) no-repeat center;" scroll="false">
+        <div class="spacer" style="width: 300px; height:25%;"></div>
+        <form class="list">
+            <ion-list>
+                <label class="item item-input">
+                    <span class="ion-email" style="padding:7px 10px 7px 0px;" ></span>
+                    <input type="email" placeholder="Email" ng-model="formData.email" >
+                </label>
+                <label class="item item-input">
+                    <span class="ion-locked" style="padding:7px 10px 7px 0px;"></span>
+                    <input type="password" placeholder="Password" ng-model = "formData.password">
+                </label>
+                <span ng-show="error" style="color:red">Wrong email or password!</span>
+            </ion-list>
+            <div class="spacer" style="height: 40px;"></div>
+            <button id="login-button1" class="button button-stable  button-block" ng-click="handleLogin()">Log in</button>
+            <button id="login-button3" class="button button-positive  button-block icon-left ion-social-facebook" ng-click="handleFacebook()">Login with Facebook</button>
+
+            <a ui-sref="signup" id="login-button2" class="button button-positive  button-block button-clear">Or create an account</a>
+            <a ng-click="handlePasswordReset()" ng-show="error" id="login-button2" class="button button-positive  button-block button-clear">Reset your password</a>
+
+        </form>
+    </ion-content>
+</ion-view>

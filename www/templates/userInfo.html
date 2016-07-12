@@ -1,0 +1,21 @@
+<ion-view title="User Info" id="page9">
+    <ion-content overflow-scroll="true" padding="true" style="background: url(img/HYMtp2m1RtazaDxfIOQJ_wallpaper-1.jpg) no-repeat center;">
+  	    <div class="card">
+	    	<div class="item item-text-wrap">
+   			Name : {{user.name}}
+  			</div>
+	    </div>
+		<div class="card">
+	    	<div class="item item-text-wrap">
+   			Email : {{user.email}}
+  			</div>
+    	</div>
+		<div class="card">
+	    	<div class="item item-text-wrap">
+   			Available requests : {{user.requests}}
+  			</div>
+    	</div>
+        <a ui-sref="changePassword" id="home-button6" class="button button-light  button-block">Reset password</a>
+        <a ui-sref="home" id="home-button6" class="button button-light  button-block">Back</a>
+    </ion-content>
+</ion-view>

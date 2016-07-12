@@ -1,0 +1,34 @@
+<ion-view title="Signup" id="page6">
+    <ion-content overflow-scroll="true" padding="true" style="background: url(img/oFLLIysuQTSjaLho7tJU_wallpaper-1.jpg) no-repeat center;" scroll="false">
+        <div class="spacer" style="width: 100%; height:10%"></div>
+        <form class="list">
+            <ion-list>
+                <label class="item item-input">
+                    <span class="ion-person" style="padding:7px 10px 7px 0px;"></span>
+                    <input type="text" placeholder="Name" ng-model="formData.name">
+                </label>
+                <label class="item item-input">
+                    <span class="ion-email" style="padding:7px 10px 7px 0px;"></span>
+                    <input type="email" placeholder="Email" ng-model="formData.email">
+                </label>
+                <label class="item item-input">
+                    <span class="ion-locked" style="padding:7px 10px 7px 0px;"></span>
+                    <input type="password" placeholder="Password" ng-model="formData.password">
+                </label>
+                <label class="item item-input">
+                    <span class="ion-locked" style="padding:7px 10px 7px 0px;"></span>
+                    <input type="password" placeholder="Confirm Password" ng-model="formData.passwordC">
+                </label>
+                <span ng-show="errorEmail" style="color:red">An account using this email already exists!</span>
+                <span ng-show="errorCredentials" style="color:red">All fields are mandatory!</span>
+                <span ng-show="errorPassword" style="color:red">Passwords do not match!</span>
+
+            </ion-list>
+            <button id="signup-button4" class="button button-stable  button-block" ng-click="handleSingUp()">Sign up</button>
+        </form>
+    </ion-content>
+</ion-view>
+
+<script id="success-modal.html" type="text/ng-template">
+ 
+</script>
