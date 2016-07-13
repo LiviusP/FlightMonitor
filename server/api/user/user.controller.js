@@ -16,7 +16,7 @@ var sendEmail = function(email,id,name){
   // create reusable transporter object using the default SMTP transport
    var transporter = nodemailer.createTransport('smtps://flight.monitor.app%40gmail.com:licentalivius@smtp.gmail.com');
 
-var link = "http://192.168.1.9:9000/api/users/confirm/" + id;
+var link = config.host + "/api/users/confirm/" + id;
 var text = " <h1>Dear " + name + ", thank you for using our app!</h1><br><br><h3>" + 
                       " Your account has been created! Click here to confirm it : <a href='" + link + "'>" + link + "</a></h3>";
 // setup e-mail data with unicode symbols
