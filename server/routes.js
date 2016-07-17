@@ -22,6 +22,7 @@ app.all('/*', function(req, res, next) {
   app.use('/api/planesData', require('./api/planesData'));
   app.use('/api/pastPlanesData', require('./api/pastPlanesData'));
   app.use('/api/users', require('./api/user'));
+  app.use('/api/soundMarkers', require('./api/soundMarkers'));
 
   app.use('/auth', require('./auth'));
   
