@@ -12,24 +12,41 @@
     </ion-content>
     <div>
 </ion-view>
--->
+
 
 <ion-view title="Monitor" id="page10" class="item item-trns" >
     <div  class="item item-trns" style="height:100%;width:100%;text-align:center;">
     <ion-content overflow-scroll="true" padding="true" style="height: 100%;top:auto;" scroll="true">
-        <div style="color: black;">
-        {{dbmeter}} Db
-
-        </div>
-        <ion-list>
+        <ion-refresher (ionRefresh)="doRefresh()">
+    <ion-refresher-content>
+            <ion-list>
             <ion-item collection-repeat='item in flightsNear' style="white-space: normal;"> 
             <div>{{item.origin}}</div>&#x25BC;<br />
             <div>{{item.destination}}</div>
-
-            </ion-item>
-        
+            </ion-item
         </ion-list>
+    </ion-refresher-content>
+  </ion-refresher>
         </div>
     </ion-content>
     <div>
+</ion-view>
+
+-->
+
+<ion-view title="Monitor" id="page10" class="item item-trns" >
+ <div  class="item item-trns" style="height:100%;width:100%;text-align:center;">
+    <ion-content overflow-scroll="true" padding="true" style="background: url(img/0Stm5SRmS22c7Eonfy2a_wallpaper-1.jpg) no-repeat center;" scroll="true">
+        <ion-refresher on-refresh="doRefresh()">
+        <ion-refresher-content>
+      </ion-refresher-content>
+      </ion-refresher>
+       <ion-list style="opacity: 0.2">
+            <ion-item collection-repeat='item in flightsNear' style="white-space: normal;"> 
+            <div>{{item.origin}}</div>&#x25BC;<br />
+            <div>{{item.destination}}</div>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+    </div>
 </ion-view>

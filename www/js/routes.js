@@ -55,6 +55,18 @@ angular.module('app.routes', [])
     controller: 'changePasswordCtrl'
   })
 
+  .state('mapPage', {
+    url: '/page12',
+    templateUrl: 'templates/map-page.html',
+    controller: 'mapPageCtrl'
+  })
+
+  .state('soundMarker', {
+    url: '/page13',
+    templateUrl: 'templates/sound-marker.html',
+    controller: 'soundMarkerCtrl'
+  })
+
 $urlRouterProvider.otherwise('/page5')
 
   

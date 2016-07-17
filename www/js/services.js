@@ -12,8 +12,8 @@ angular.module('app.services', [])
 
 	var service = {
 		getHost : function() {
-			//return "http://192.168.1.9:9000";
-            return "https://flightmonitorbackend.herokuapp.com";
+			return "http://192.168.1.9:9000";
+            //return "https://flightmonitorbackend.herokuapp.com";
 		}
 	}
 
@@ -48,6 +48,30 @@ angular.module('app.services', [])
 
     return service;
 }])
+
+.service('MarkerService' ,['$http','ConfigService', '$window' , function($http,ConfigService,$window){
+
+    var service = {
+
+        getMarkers : function() {
+            var link = ConfigService.getHost() + '/api/soundMarkers';
+            return $http.get(link,{headers: {'Authorization': 'Bearer ' + $window.localStorage['token']}})
+
+        },
+
+        addMarker : function(data) {
+               var link = ConfigService.getHost() + '/api/soundMarkers/add';
+
+                return $http.put(link,data,
+                                          {
+                                            headers: {'Authorization': 'Bearer ' + $window.localStorage['token']}
+                                          })
+        }
+
+    };
+
+    return service;
+ }])
 
 .service('UserService' , ['$http' , 'ConfigService' , '$window' , function($http,ConfigService,$window){
 
