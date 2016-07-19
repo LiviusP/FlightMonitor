@@ -214,7 +214,7 @@ angular.module('app.controllers', [])
 					  });      
 					 
 					  var infoWindow = new google.maps.InfoWindow({
-					      content: markerData.user + " : " +  markerData.data + "Db"
+					      content: markerData.user + " : " +  markerData.data.soundLevel + "Db  with " + markerData.data.numberOfPlanes + " planes near."
 					  });
 					 
 					  google.maps.event.addListener(marker, 'click', function () {
@@ -299,16 +299,18 @@ angular.module('app.controllers', [])
 })   
 
 
-.controller('monitorCtrl', function($scope,PlanesService,$interval,$stateParams) {
+.controller('monitorCtrl', function($scope,PlanesService,$interval,$stateParams,MarkerService,$ionicPopup) {
 
 ionic.Platform.ready(function(){
 	    // will execute when device is ready, or immediately if the device is already ready.
 		$scope.flightsInSight = [];
 		$scope.flightsNear = [];
+		$scope.live = false;
 		var pastHeading = {}; 
 		var lastCall = {};
 		var coordinates = {};
 		var watchId = {};
+		var positionData = {};
 
 
 
@@ -318,6 +320,57 @@ ionic.Platform.ready(function(){
 	    var toBack = true; //send preview box to the back of the webview
 	    var rect = {x: 0, y: 0, width: window.screen.width, height:window.screen.height};
 	   // cordova.plugins.camerapreview.startCamera(rect, "front", tapEnabled, dragEnabled, toBack);
+
+
+	   //sound marker
+
+		$scope.dbmeter = 0;
+
+		var g = new JustGage({
+				    id: "gauge",
+				    value: $scope.dbmeter,
+				    min: 0,
+				    max: 150,
+				    title: "Decibels",
+				    valueFontColor: 'black',
+				    titleFontColor: 'black'
+				  });
+
+		DBMeter.delete();
+
+		var subscription = DBMeter.start(function(data){
+			if (Math.round(data) != $scope.dbmeter) {
+				$scope.dbmeter = Math.round(data);
+				if(!$scope.$$phase) {
+		  					$scope.$apply();
+						}
+				g.refresh($scope.dbmeter);
+
+			}
+		});
+
+
+		$scope.shareMarker = function() {
+
+
+			var data = {
+				data: {
+						soundLevel : $scope.dbmeter,
+						numberOfPlanes : $scope.flightsNear.length
+					},
+				point: positionData
+			};
+
+			MarkerService.addMarker(data).then(function(){
+				$ionicPopup.alert({
+									    title: 'Your info was succesfully shared!',
+									    template: 'Other users are now able to see your shared information'
+						     			  });
+				$state.go('home');
+			});
+
+		};
+
 
 
 	    //geolocation coordinates
@@ -330,6 +383,11 @@ ionic.Platform.ready(function(){
 	    		longitude : position.coords.longitude,
 	    		timestamp : position.timestamp
 	    	};
+
+	    	positionData = {
+	    		latitude : position.coords.latitude , 
+	    		longitude : position.coords.longitude
+	    	};
 	    	
 	    	if ($stateParams.inFlight === true) {
 
@@ -337,7 +395,7 @@ ionic.Platform.ready(function(){
 		    	PlanesService.getPlanesNear(coordinates).then(function(data){
 		    	
 			    	$scope.flightsNear = data.data;
-			    	
+			    	$scope.live = true;
 			    	console.log($scope.flightsNear);
 
 			    	if(!$scope.$$phase) {

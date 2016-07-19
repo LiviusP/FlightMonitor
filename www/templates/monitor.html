@@ -41,6 +41,8 @@
         <ion-refresher-content>
       </ion-refresher-content>
       </ion-refresher>
+        <div id="gauge"  ng-show="live"  style="width:200px; height:160px; margin: auto;" ></div>
+        <button id="login-button1" class="button button-positive  button-block" ng-click="shareMarker()" ng-show="live" style="margin-bottom: 30px;">Share</button>
        <ion-list style="opacity: 0.2">
             <ion-item collection-repeat='item in flightsNear' style="white-space: normal;"> 
             <div>{{item.origin}}</div>&#x25BC;<br />

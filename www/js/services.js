@@ -12,8 +12,8 @@ angular.module('app.services', [])
 
 	var service = {
 		getHost : function() {
-			return "http://192.168.1.9:9000";
-            //return "https://flightmonitorbackend.herokuapp.com";
+			//return "http://192.168.1.9:9000";
+            return "https://flightmonitorbackend.herokuapp.com";
 		}
 	}
 
