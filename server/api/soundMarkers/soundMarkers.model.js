@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var SoundMarkersSchema = new Schema({
- data : String,
+ data : Object,
  point : Object,
  user: String
 });
