@@ -1,6 +1,6 @@
 angular.module('app.controllers', [])
      
-.controller('loginCtrl', function($scope,AuthService,$window,$state,UserService,$ionicPopup) {
+.controller('loginCtrl', function($scope,AuthService,$window,$state,UserService,$ionicPopup,$cordovaInAppBrowser,ConfigService,$rootScope,$http) {
 
 // at the bottom of your controller
 	var init = function () {
@@ -44,23 +44,50 @@ angular.module('app.controllers', [])
 	};
 
 	$scope.handleFacebook = function(){
-		AuthService.authFacebook().then(function(res){
+	
+	var options = {
+      location: 'yes',
+      clearcache: 'yes',
+      toolbar: 'no'
+ 	  };
 
-		});
+      $cordovaInAppBrowser.open(ConfigService.getHost()+'/auth/facebook', '_blank', options)
+
+      .then(function(event) {
+         console.log(event);
+      })
+		
+      .catch(function(event) {
+        console.log(event);
+      });
+ 
 
 	}
 
+	$rootScope.$on('$cordovaInAppBrowser:loadstart', function(e, event){
+
+		if (event.url.indexOf("/auth/facebook/callback/jwt/") > -1) {
+			$cordovaInAppBrowser.close();
+			console.log(event.url);
+			var token = event.url.slice(event.url.indexOf("jwt/") + 4, -4);	
+			$window.localStorage['token'] = token;
+		
+			$state.go('home');
+				
+		
+		};
+	});
 
 	$scope.handlePasswordReset = function() {
 
 		if ($scope.formData.email) {
 			UserService.resetPassword($scope.formData.email).then(function(res){
 					
-					$ionicPopup.alert({
+					var alert = $ionicPopup.alert({
 									    title: 'Password was reset!',
 									    template: 'You can now login using your new password that was sent to you in an email!'
 									  });
-					$state.go('login');
+					alert.then(function(){$state.go('login');});
 
 			}, function(err){
 				$scope.error = true;
@@ -95,11 +122,11 @@ angular.module('app.controllers', [])
 			if ($scope.formData.password === $scope.formData.passwordC) {
 					AuthService.authSingUp($scope.formData.email , $scope.formData.password, $scope.formData.name).then(function(res){
 						if (res.status === 200) {
-									$ionicPopup.alert({
+									var alert = $ionicPopup.alert({
 									    title: 'Account created!',
 									    template: 'You have to confirm your email before using the account!'
 									  });
-					$state.go('login');
+									alert.then(function(){$state.go('login');});
 						}
 					},function(res){
 					    $scope.errorEmail = true;
@@ -124,6 +151,7 @@ angular.module('app.controllers', [])
    
 .controller('homeCtrl', function($scope) {
 
+		DBMeter.delete();
 
 })
    
@@ -158,11 +186,11 @@ angular.module('app.controllers', [])
 
 						if (res.status === 200) {
 
-							$ionicPopup.alert({
+							var alert = $ionicPopup.alert({
 									    title: 'Password was succesfully changed!',
 									    template: 'You can now login using your new password!'
 						     			  });
-							$state.go('userInfo');
+							alert.then(function(){$state.go('userInfo');});
 
 						} else {
 							$scope.error = true;
@@ -214,7 +242,7 @@ angular.module('app.controllers', [])
 					  });      
 					 
 					  var infoWindow = new google.maps.InfoWindow({
-					      content: markerData.user + " : " +  markerData.data.soundLevel + "Db  with " + markerData.data.numberOfPlanes + " planes near."
+					      content: markerData.user + " : " +  markerData.data.soundLevel + " Stars  with " + markerData.data.numberOfPlanes + " planes near."
 					  });
 					 
 					  google.maps.event.addListener(marker, 'click', function () {
@@ -250,8 +278,9 @@ angular.module('app.controllers', [])
 				    min: 0,
 				    max: 150,
 				    title: "Decibels",
-				    valueFontColor: 'black',
-				    titleFontColor: 'black'
+				    valueFontColor: 'white',
+				    titleFontColor: 'white',
+				    levelColors: ['#ff0000','#ff0000','#ff0000']
 				  });
 
 		DBMeter.delete();
@@ -283,14 +312,20 @@ angular.module('app.controllers', [])
 			};
 
 			MarkerService.addMarker(data).then(function(){
-				$ionicPopup.alert({
+				var alert = $ionicPopup.alert({
 									    title: 'Your info was succesfully shared!',
 									    template: 'Other users are now able to see your shared information'
 						     			  });
-				$state.go('home');
+				alert.then(function(){$state.go('home');});
 			});
 
-			}, function(error){console.log(error)} , {timeout: 10000, enableHighAccuracy: true});
+			}, function(error){	var alert = $ionicPopup.alert({
+									    title: 'Geolocation failed!',
+									    template: 'Please make sure you have enabled you location service'
+						     			 });
+						alert.then(function(){$state.go('home');});
+
+					} , {timeout: 5000, enableHighAccuracy: true});
 
 
 		};
@@ -299,7 +334,7 @@ angular.module('app.controllers', [])
 })   
 
 
-.controller('monitorCtrl', function($scope,PlanesService,$interval,$stateParams,MarkerService,$ionicPopup) {
+.controller('monitorCtrl', function($scope,PlanesService,$interval,$stateParams,MarkerService,$ionicPopup,$state) {
 
 ionic.Platform.ready(function(){
 	    // will execute when device is ready, or immediately if the device is already ready.
@@ -311,43 +346,9 @@ ionic.Platform.ready(function(){
 		var coordinates = {};
 		var watchId = {};
 		var positionData = {};
-
-
-
-		//camera backgroud
-		var tapEnabled = false; //enable tap take picture
-	    var dragEnabled = false; //enable preview box drag across the screen
-	    var toBack = true; //send preview box to the back of the webview
-	    var rect = {x: 0, y: 0, width: window.screen.width, height:window.screen.height};
-	   // cordova.plugins.camerapreview.startCamera(rect, "front", tapEnabled, dragEnabled, toBack);
-
-
-	   //sound marker
-
-		$scope.dbmeter = 0;
-
-		var g = new JustGage({
-				    id: "gauge",
-				    value: $scope.dbmeter,
-				    min: 0,
-				    max: 150,
-				    title: "Decibels",
-				    valueFontColor: 'black',
-				    titleFontColor: 'black'
-				  });
-
-		DBMeter.delete();
-
-		var subscription = DBMeter.start(function(data){
-			if (Math.round(data) != $scope.dbmeter) {
-				$scope.dbmeter = Math.round(data);
-				if(!$scope.$$phase) {
-		  					$scope.$apply();
-						}
-				g.refresh($scope.dbmeter);
-
-			}
-		});
+		$scope.rating = {};
+		$scope.rating.rate = 3;
+  		$scope.rating.max = 5;
 
 
 		$scope.shareMarker = function() {
@@ -355,18 +356,18 @@ ionic.Platform.ready(function(){
 
 			var data = {
 				data: {
-						soundLevel : $scope.dbmeter,
+						soundLevel : $scope.rating.rate,
 						numberOfPlanes : $scope.flightsNear.length
 					},
 				point: positionData
 			};
 
 			MarkerService.addMarker(data).then(function(){
-				$ionicPopup.alert({
+				var alert = $ionicPopup.alert({
 									    title: 'Your info was succesfully shared!',
-									    template: 'Other users are now able to see your shared information'
+									    template: 'Other users are now able to see your shared opinion'
 						     			  });
-				$state.go('home');
+				alert.then(function(){$state.go('home');});
 			});
 
 		};
@@ -374,7 +375,7 @@ ionic.Platform.ready(function(){
 
 
 	    //geolocation coordinates
-	    navigator.geolocation.getCurrentPosition(onSuccessGeolocation, onErrorGeolocation , {timeout: 10000, enableHighAccuracy: true});
+	    navigator.geolocation.getCurrentPosition(onSuccessGeolocation, onErrorGeolocation , {timeout: 5000, enableHighAccuracy: true});
 
 
 	    function onSuccessGeolocation(position) {
@@ -403,6 +404,13 @@ ionic.Platform.ready(function(){
 					}
 
 					$scope.$broadcast('scroll.refreshComplete');
+				}, function(error){
+						var alert = $ionicPopup.alert({
+									    title: 'Email not confirmed!',
+									    template: 'You need to confirm your email before using this feature!'
+						     			 });
+						alert.then(function(){$state.go('home');});
+						
 				});
 	    	} else {
 	    		console.log("HISTORY");
@@ -425,8 +433,11 @@ ionic.Platform.ready(function(){
 
 	    
 		function onErrorGeolocation(error) {
-	    	console.log('code: '    + error.code    + '\n' +
-	    	      'message: ' + error.message + '\n');
+	    		var alert = $ionicPopup.alert({
+									    title: 'Geolocation failed!',
+									    template: 'Please make sure you have enabled you location service'
+						     			 });
+						alert.then(function(){$state.go('home');});
 		}
 
 

@@ -34,21 +34,21 @@
 
 -->
 
-<ion-view title="Monitor" id="page10" class="item item-trns" >
- <div  class="item item-trns" style="height:100%;width:100%;text-align:center;">
-    <ion-content overflow-scroll="true" padding="true" style="background: url(img/0Stm5SRmS22c7Eonfy2a_wallpaper-1.jpg) no-repeat center;" scroll="true">
+<ion-view title="Monitor" id="page10" class="item-trns" style="color: white;" >
+ <div  class="item-trns" style="height:100%;width:100%;text-align:center;">
+    <ion-content overflow-scroll="true" padding="true" style="background: url(img/wallpaper-2.jpg) no-repeat center;" scroll="true">
         <ion-refresher on-refresh="doRefresh()">
         <ion-refresher-content>
       </ion-refresher-content>
       </ion-refresher>
-        <div id="gauge"  ng-show="live"  style="width:200px; height:160px; margin: auto;" ></div>
-        <button id="login-button1" class="button button-positive  button-block" ng-click="shareMarker()" ng-show="live" style="margin-bottom: 30px;">Share</button>
        <ion-list style="opacity: 0.2">
-            <ion-item collection-repeat='item in flightsNear' style="white-space: normal;"> 
+            <ion-item collection-repeat='item in flightsNear' style="white-space: normal;" > 
             <div>{{item.origin}}</div>&#x25BC;<br />
             <div>{{item.destination}}</div>
             </ion-item>
         </ion-list>
+        <rating ng-model="rating.rate" max="rating.max" ng-show="live" style="margin-top: 20px"></rating>
+        <button id="login-button1" class="button button-positive  button-block" ng-click="shareMarker()" ng-show="live" style="margin-bottom: 30px;">Share</button>
     </ion-content>
     </div>
 </ion-view>
