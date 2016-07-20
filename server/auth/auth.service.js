@@ -108,4 +108,5 @@ exports.hasRole = hasRole;
 exports.signToken = signToken;
 exports.setTokenCookie = setTokenCookie;
 exports.sendTokenToClient = sendTokenToClient;
+exports.sendTokenToRedirectClient = sendTokenToRedirectClient;
 exports.canMakeRequests = canMakeRequests;
