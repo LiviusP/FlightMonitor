@@ -95,6 +95,14 @@ function sendTokenToClient(req , res) {
   res.status(200).json(response);
 }
 
+function sendTokenToRedirectClient(req , res) {
+  if (!req.user) return res.status(404).json({ message: 'Something went wrong, please try again.'});
+  var token = signToken(req.user._id, req.user.role);
+  let response = {};
+  response.token = token ; 
+  res.status(200).redirect(config.facebook.callbackURL + '/jwt/' + token);
+}
+
 exports.isAuthenticated = isAuthenticated;
 exports.hasRole = hasRole;
 exports.signToken = signToken;
